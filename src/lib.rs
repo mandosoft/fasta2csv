@@ -23,11 +23,23 @@ impl CSV {
     }
 }
 
+pub fn search_delimiter<'a>(line: &str) -> &str {
+
+    let delimiter: &str = ">";
+
+    if line.contains(delimiter) {
+        println!("{}", line)
+        }
+
+    return line;
+}
+
+
 pub fn run(config: CSV) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
     for line in contents.lines() {
-        println!("{}", line);
+        search_delimiter(line);
     }
 
     Ok(())
