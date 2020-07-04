@@ -23,24 +23,40 @@ impl CSV {
     }
 }
 
-pub fn search_delimiter<'a>(line: &str) -> &str {
+pub fn comma_separate(entry: &str) -> Vec<&str>{
+
+    let split = entry.split("");
+    let entry = split.collect::<Vec<&str>>();
+    println!("{:?}", entry);
+
+    return entry;
+
+}
+
+
+pub fn search_delimiter<'a>(contents: String, filename: String) {
 
     let delimiter: &str = ">";
+    let mut entry: String = filename.to_owned();
 
-    if line.contains(delimiter) {
-        println!("{}", line)
+    for line in contents.lines() {
+
+        if line.contains(delimiter) {
+            comma_separate(&entry);
+            println!("{}", entry);
+            entry = line.to_owned();
         }
-
-    return line;
+        else {
+            entry.push_str(line);
+        }
+    }
 }
 
 
 pub fn run(config: CSV) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.filename)?;
+    let contents = fs::read_to_string(&config.filename)?;
 
-    for line in contents.lines() {
-        search_delimiter(line);
-    }
+    search_delimiter(contents, config.filename);
 
     Ok(())
 }
