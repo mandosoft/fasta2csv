@@ -24,15 +24,16 @@ impl CSV {
 }
 
 pub fn comma_separate(entry: &str) -> Vec<&str>{
-
     let split = entry.split("");
     let entry = split.collect::<Vec<&str>>();
     println!("{:?}", entry);
-
     return entry;
 
 }
 
+pub fn write2csv(input_file: &String){
+    let csv = fs::File::create(input_file.to_owned() + "csv");
+}
 
 pub fn search_delimiter<'a>(contents: String, filename: String) {
 
@@ -55,8 +56,8 @@ pub fn search_delimiter<'a>(contents: String, filename: String) {
 
 pub fn run(config: CSV) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&config.filename)?;
-
+    let file_input = config.filename.clone();
     search_delimiter(contents, config.filename);
-
+    write2csv(&file_input);
     Ok(())
 }
