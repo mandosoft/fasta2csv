@@ -22,37 +22,28 @@ impl CSV {
     }
 }
 
-pub fn comma_separate(entry: &str) -> Vec<&str>{
-    let split = entry.split("");
-    let entry = split.collect::<Vec<&str>>();
-    return entry;
-}
-
-pub fn write2csv(input_file: &String, entry: &String){
-    let prefix:Vec<&str> = input_file.split(".").collect();
-    let mut csv = fs::File::create(prefix[0].to_owned() + ".csv").expect("Unable to create file");;
-    csv.write_all(entry.as_bytes()).expect("Unable to write data");
-}
-
-pub fn search_delimiter<'a>(contents: String, filename: String) {
+pub fn search_delimiter<'a>(contents: String, filename: String, mut csv: File) {
     let delimiter: &str = ">";
-    let mut entry: String = filename.to_owned();
+    let mut entry: String = String::new();
+    println!("{:?}", entry);
     for line in contents.lines() {
         if line.contains(delimiter) {
-            comma_separate(&entry);
-            write2csv(&filename, &entry);
-            println!("{}", entry);
-            entry = line.to_owned();
+            let split = line.split("");
+            let entry: String = split.map(|x| x.to_owned() + ",").collect();
+            write!(csv, "{}", entry);
+            //&entry = line.to_owned();
         }
         else {
             entry.push_str(line);
+            println!("{:?}", entry);
         }
     }
 }
 
 pub fn run(config: CSV) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&config.filename)?;
-    let file_input = config.filename.clone();
-    search_delimiter(contents, config.filename);
+    let prefix:Vec<&str> = config.filename.split(".").collect();
+    let csv = fs::File::create(prefix[0].to_owned() + ".csv").expect("Unable to create file");
+    search_delimiter(contents, config.filename, csv);
     Ok(())
 }
